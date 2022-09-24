@@ -12,7 +12,7 @@ import { CreateProductDTO } from './dto/create-product.dto';
 import { ExternalProductDto } from './dto/external-product.dto';
 import { ProductsDataService } from './products-data.service';
 import { Product } from './interfaces/product.inteface';
-import { dateToArray } from '../helpers/date.helper';
+import { dateToArray } from '../shared/helpers/date.helper';
 
 @Controller('products')
 export class ProductsController {

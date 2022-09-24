@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { Product } from '../products/interfaces/product.inteface';
 import { UpdateProductDTO } from './dto/update-product.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductsDataService {
@@ -9,7 +10,7 @@ export class ProductsDataService {
 
   addProduct(newProduct: CreateProductDTO): Product {
     const product: Product = {
-      id: this._products_.length.toString(),
+      id: uuidv4(),
       ...newProduct,
       createdAt: new Date(),
       updatedAt: new Date(),
