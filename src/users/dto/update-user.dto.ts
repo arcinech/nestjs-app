@@ -1,7 +1,7 @@
 import { Roles } from '../enums/roles.enums';
 import { UserAddress } from '../interfaces/userAddress.interface';
 
-export interface CreateUserDto {
+export interface UpdateUserDto {
   firstname: string;
   lastname: string;
   email: string;
@@ -10,7 +10,7 @@ export interface CreateUserDto {
   role: Roles;
 }
 
-export interface CreateUserAddressDto {
+export interface UpdateUserAddressDto {
   street: string;
   city: string;
   country: string;
