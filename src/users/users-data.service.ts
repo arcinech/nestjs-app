@@ -3,17 +3,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './interfaces/user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { arrayToDate } from '../shared/helpers/date.helper';
 
 @Injectable()
 export class UsersDataService {
-  private _users_: User[] = [];
+  private _users_: Array<User> = [];
 
   addUser(newUser: CreateUserDto): User {
     const user: User = {
       id: uuidv4(),
       ...newUser,
-      birthdate: arrayToDate(newUser.birthdate),
     };
 
     this._users_.push(user);
@@ -26,7 +24,6 @@ export class UsersDataService {
         return {
           ...updatedUser,
           id: item.id,
-          birthdate: arrayToDate(updatedUser.birthdate),
         };
       }
       return item;
