@@ -7,7 +7,7 @@ export interface ExternalUserDto {
   lastname: string;
   email: string;
   birthdate: Array<number>;
-  address: Array<UserAddress>;
+  address?: Array<UserAddress>;
   role: Roles;
 }
 export interface ExternalUserAddressDto {
