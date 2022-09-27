@@ -1,4 +1,4 @@
-import { Roles } from '../enums/roles.enums';
+import { Roles } from '../../shared/enums/roles.enums';
 import { Transform, Type } from 'class-transformer';
 import { arrayToDate } from '../../shared/helpers/date.helper';
 import {
