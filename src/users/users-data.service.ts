@@ -43,4 +43,8 @@ export class UsersDataService {
   deleteUserById(id: string): void {
     this._users_.filter((item) => item.id !== id);
   }
+
+  getUserByEmail(email: string): User {
+    return this._users_.find((item) => item.email === email);
+  }
 }
