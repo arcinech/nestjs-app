@@ -15,10 +15,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { dateToArray } from 'src/shared/helpers/date.helper';
 import { User } from './interfaces/user.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserValidatorService } from './user-validator.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersRepository: UsersDataService) {}
+  constructor(
+    private usersRepository: UsersDataService,
+    private usersValidators: UserValidatorService,
+  ) {}
 
   mapUserToExternal(user: User): ExternalUserDto {
     return {
@@ -43,6 +47,7 @@ export class UsersController {
 
   @Post()
   addUser(@Body() _user_: CreateUserDto): ExternalUserDto {
+    this.usersValidators.validateUniqueEmail(_user_.email);
     return this.mapUserToExternal(this.usersRepository.addUser(_user_));
   }
 
