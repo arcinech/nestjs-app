@@ -9,7 +9,7 @@ import {
   IsArray,
 } from 'class-validator';
 
-export class CreateProductDTO {
+export class UpdateProductDTO {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(25)
