@@ -11,9 +11,9 @@ import {
 
 export class CreateUserDto {
   @IsNotEmpty()
-  firstname: string;
+  firstName: string;
   @IsNotEmpty()
-  lastname: string;
+  lastName: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -41,7 +41,7 @@ export class CreateUserAddressDto {
 
   @IsNotEmpty()
   @IsNumber()
-  buldingNumber: number;
+  buildingNumber: number;
 
   @IsNumber()
   flatNumber?: number;
