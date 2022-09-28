@@ -18,6 +18,9 @@ export class User {
   @Column({ length: 50 })
   email: string;
 
+  @Column({ type: 'date' })
+  birthdate: Date;
+
   @Column('enum', {
     enum: Roles,
   })
