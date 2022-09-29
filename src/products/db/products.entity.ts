@@ -27,6 +27,7 @@ export class Product {
 
   @Column({
     default: 1,
+    type: 'int',
   })
   count: number;
 
