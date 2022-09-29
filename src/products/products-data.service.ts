@@ -50,6 +50,6 @@ export class ProductsDataService {
 
   getProductById(id: string): Promise<Product> {
     // findOne changed to findOneBy in typeorm ^0.3.0
-    return this.productRepository.findOneBy({ id: id });
+    return this.productRepository.findOne({ where: { id: id } });
   }
 }
