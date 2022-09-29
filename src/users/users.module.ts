@@ -8,10 +8,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersDataService, UserValidatorService],
-  imports: [
-    TypeOrmModule.forFeature([UserAddressRepository]),
-    TypeOrmModule.forFeature([UserRepository]),
+  providers: [
+    UsersDataService,
+    UserValidatorService,
+    UserRepository,
+    UserAddressRepository,
   ],
+  imports: [TypeOrmModule.forFeature([UserAddressRepository, UserRepository])],
 })
 export class UsersModule {}

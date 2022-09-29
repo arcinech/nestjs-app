@@ -73,8 +73,4 @@ export class UsersDataService {
   getAllUsers(): Promise<User[]> {
     return this.userRepository.find();
   }
-
-  getUserByEmail(email: string): Promise<User> {
-    return this.userRepository.findOneBy({ email: email });
-  }
 }
