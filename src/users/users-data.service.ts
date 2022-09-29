@@ -51,7 +51,9 @@ export class UsersDataService {
     const userAddress: UserAddress[] = await this.prepareUserAddressesToSave(
       updatedUser.address,
     );
-    const userToUpdate = await this.userRepository.findOneBy({ id: id });
+    const userToUpdate = await this.userRepository.findOne({
+      where: { id: id },
+    });
 
     userToUpdate.firstName = updatedUser.firstName;
     userToUpdate.lastName = updatedUser.lastName;
@@ -67,7 +69,9 @@ export class UsersDataService {
   }
 
   getUserById(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ id: id });
+    return this.userRepository.findOne({
+      where: { id: id },
+    });
   }
 
   getAllUsers(): Promise<User[]> {
