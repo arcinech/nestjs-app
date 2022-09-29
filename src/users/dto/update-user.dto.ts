@@ -5,15 +5,16 @@ import {
   IsEmail,
   IsNotEmpty,
   ValidateNested,
-  IsNumber,
   IsEnum,
+  IsInt,
+  IsOptional,
 } from 'class-validator';
 
 export class UpdateUserDto {
   @IsNotEmpty()
-  firstname: string;
+  firstName: string;
   @IsNotEmpty()
-  lastname: string;
+  lastName: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -40,9 +41,12 @@ export class UpdateUserAddressDto {
   street: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  buldingNumber: number;
+  @IsInt()
+  @Type(() => Number)
+  buildingNumber: number;
 
-  @IsNumber()
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
   flatNumber?: number;
 }

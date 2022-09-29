@@ -12,9 +12,9 @@ import {
 import { CreateProductDTO } from './dto/create-product.dto';
 import { ExternalProductDto } from './dto/external-product.dto';
 import { ProductsDataService } from './products-data.service';
-import { Product } from './interfaces/product.inteface';
 import { dateToArray } from '../shared/helpers/date.helper';
 import { RoleGuard } from '../shared/guards/role.guard';
+import { Product } from './db/products.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -25,44 +25,46 @@ export class ProductsController {
       ...product,
       createdAt: dateToArray(product.createdAt),
       updatedAt: dateToArray(product.updatedAt),
+      tags: product.tags?.map((i) => i.name),
     };
   }
 
   @Get()
-  getAllProducts(): Array<ExternalProductDto> {
-    return this.productRepository
-      .getAllProducts()
-      .map((item) => this.mapProductToExternal(item));
+  async getAllProducts(): Promise<Array<ExternalProductDto>> {
+    const products = await this.productRepository.getAllProducts();
+    return products.map((i) => this.mapProductToExternal(i));
   }
 
   @Get(':id')
-  getProductById(@Param('id') _id_: string): ExternalProductDto {
+  async getProductById(@Param('id') _id_: string): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      this.productRepository.getProductById(_id_),
+      await this.productRepository.getProductById(_id_),
     );
   }
 
   @Post()
   @UseGuards(RoleGuard)
-  addIProduct(@Body() _product_: CreateProductDTO): ExternalProductDto {
+  async addProduct(
+    @Body() _product_: CreateProductDTO,
+  ): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      this.productRepository.addProduct(_product_),
+      await this.productRepository.addProduct(_product_),
     );
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteProduct(@Param('id') _id_: string): void {
-    this.productRepository.deleteProductById(_id_);
+  async deleteProduct(@Param('id') _id_: string): Promise<void> {
+    await this.productRepository.deleteProductById(_id_);
   }
 
   @Put(':id')
-  updateProduct(
+  async updateProduct(
     @Param('id') _id_: string,
     @Body() _product_: CreateProductDTO,
-  ): ExternalProductDto {
+  ): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      this.productRepository.updateProduct(_id_, _product_),
+      await this.productRepository.updateProduct(_id_, _product_),
     );
   }
 }

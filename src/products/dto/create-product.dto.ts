@@ -3,11 +3,13 @@ import {
   IsNotEmpty,
   IsNumber,
   IsEnum,
+  IsInt,
   Min,
   MaxLength,
   MinLength,
   IsArray,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductDTO {
   @IsNotEmpty()
@@ -18,11 +20,13 @@ export class CreateProductDTO {
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   price: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @Min(0)
+  @Type(() => Number)
   count: number;
 
   @IsArray()
