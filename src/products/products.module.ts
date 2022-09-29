@@ -7,10 +7,7 @@ import { ProductRepository } from './db/products.repository';
 
 @Module({
   controllers: [ProductsController],
-  providers: [ProductsDataService],
-  imports: [
-    TypeOrmModule.forFeature([TagRepository]),
-    TypeOrmModule.forFeature([ProductRepository]),
-  ],
+  providers: [ProductsDataService, ProductRepository, TagRepository],
+  imports: [TypeOrmModule.forFeature([TagRepository, ProductRepository])],
 })
 export class ProductsModule {}

@@ -1,8 +1,12 @@
-import { EntityRepository, Repository, In } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { Tag } from './tag.entity';
 
-@EntityRepository(Tag)
+@Injectable()
 export class TagRepository extends Repository<Tag> {
+  constructor(private dataSource: DataSource) {
+    super(Tag, dataSource.createEntityManager());
+  }
   findTagsByName(names: string[]): Promise<Tag[]> {
     return this.find({
       where: {
