@@ -4,52 +4,48 @@ import { UpdateProductDTO } from './dto/update-product.dto';
 import { ProductRepository } from './db/products.repository';
 import { TagRepository } from './db/tag.repository';
 import { Product } from './db/products.entity';
-import { Tag } from './db/tag.entity';
+import { dataSource } from 'src/data-source';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class ProductsDataService {
-  constructor(
-    private productRepository: ProductRepository,
-    private tagRepository: TagRepository,
-  ) {}
-
   async addProduct(newProduct: CreateProductDTO): Promise<Product> {
-    const tags: Tag[] = await this.tagRepository.findTagsByName(
-      newProduct.tags,
-    );
-    const productToSave = new Product();
-    productToSave.name = newProduct.name;
-    productToSave.count = newProduct.count;
-    productToSave.price = newProduct.price;
-    productToSave.tags = tags;
+    return dataSource.transaction(async (manager: EntityManager) => {
+      const productToSave = new Product();
 
-    return this.productRepository.save(productToSave);
+      productToSave.name = newProduct.name;
+      productToSave.count = newProduct.count;
+      productToSave.price = newProduct.price;
+      productToSave.tags = await TagRepository.findTagsByName(newProduct.tags);
+
+      return await manager.getRepository(Product).save(productToSave);
+    });
   }
 
   async updateProduct(id: string, product: UpdateProductDTO): Promise<Product> {
-    const tags: Tag[] = await this.tagRepository.findTagsByName(product.tags);
-    const productToUpdate = await this.getProductById(id);
+    return dataSource.transaction(async (manager: EntityManager) => {
+      const productToUpdate = await manager
+        .getRepository(Product)
+        .findOneBy({ id: id });
 
-    productToUpdate.name = product.name;
-    productToUpdate.price = product.price;
-    productToUpdate.count = product.count;
-    productToUpdate.tags = tags;
+      productToUpdate.name = product.name;
+      productToUpdate.count = product.count;
+      productToUpdate.price = product.price;
+      productToUpdate.tags = await TagRepository.findTagsByName(product.tags);
 
-    await this.productRepository.save(productToUpdate);
-
-    return this.getProductById(id);
+      return await manager.getRepository(Product).save(productToUpdate);
+    });
   }
 
   async deleteProductById(id: string): Promise<void> {
-    this.productRepository.delete(id);
+    ProductRepository.delete(id);
   }
 
   getAllProducts(): Promise<Product[]> {
-    return this.productRepository.find();
+    return ProductRepository.find();
   }
 
   getProductById(id: string): Promise<Product> {
-    // findOne changed to findOneBy in typeorm ^0.3.0
-    return this.productRepository.findOne({ where: { id: id } });
+    return ProductRepository.findOne({ where: { id: id } });
   }
 }
