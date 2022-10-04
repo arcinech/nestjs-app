@@ -4,10 +4,8 @@ import { UserRepository } from './db/user.repository';
 
 @Injectable()
 export class UserValidatorService {
-  constructor(private usersRepository: UserRepository) {}
-
   async validateUniqueEmail(email: string): Promise<void> {
-    const user = await this.usersRepository.getUserByEmail(email);
+    const user = await UserRepository.getUserByEmail(email);
     if (user) {
       throw new UserRequireUniqueEmailException();
     }
