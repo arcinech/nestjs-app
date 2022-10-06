@@ -6,7 +6,6 @@ import { Roles } from '../../shared/enums/roles.enums';
 import { UserAddress } from '../../users/db/userAddress.entity';
 import { dataSource } from '../../data-source';
 import { Product } from 'src/products/db/products.entity';
-import { arrayToDate, dateToArray } from 'src/shared/helpers/date.helper';
 export class InitData1664530121107 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const tags = await this.saveTags();
@@ -36,12 +35,12 @@ export class InitData1664530121107 implements MigrationInterface {
   private async saveUsers(): Promise<User[]> {
     const usersArr: User[] = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
       const userToSave = new User();
       userToSave.firstName = faker.name.firstName();
       userToSave.lastName = faker.name.lastName();
       userToSave.email = faker.internet.email();
-      userToSave.birthdate = faker.datatype.datetime();
+      userToSave.birthdate = faker.date.birthdate();
       userToSave.role = faker.helpers.arrayElement([
         Roles.ADMIN,
         Roles.SELLER,
