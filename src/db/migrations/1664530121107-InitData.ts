@@ -21,58 +21,10 @@ export class InitData1664530121107 implements MigrationInterface {
       `CREATE TABLE \`users\` (\`id\` varchar(36) NOT NULL, \`firstName\` varchar(50) NOT NULL, \`lastName\` varchar(50) NOT NULL, \`email\` varchar(50) NOT NULL, \`birthdate\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`role\` enum ('ADMIN', 'SELLER', 'CUSTOMER') NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `CREATE TABLE \`orders\` (\`id\` varchar(36) NOT NULL, \`createdAt\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updatedAt\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), \`total\` float NOT NULL DEFAULT '0', \`quantity\` int NOT NULL DEFAULT '0', \`orderId\` varchar(36) NULL, \`productIdId\` varchar(36) NULL, \`priceId\` varchar(36) NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
-    );
-    await queryRunner.query(
       `CREATE TABLE \`products_tags\` (\`productId\` varchar(36) NOT NULL, \`tagId\` varchar(36) NOT NULL, INDEX \`IDX_760e7f7633ea6698009264a7b9\` (\`productId\`), INDEX \`IDX_26646b3daf27bc55654b2e5134\` (\`tagId\`), PRIMARY KEY (\`productId\`, \`tagId\`)) ENGINE=InnoDB`,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`quantity\``);
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`orderId\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP COLUMN \`productIdId\``,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`priceId\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`quantity\` int NOT NULL DEFAULT '0'`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`orderId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`productIdId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`priceId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`additionalInfo\` text NOT NULL DEFAULT ''`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`status\` enum ('NEW', 'COMPLETED', 'SEND') NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`addressIdId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`userIdId\` varchar(36) NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE \`user_addresses\` ADD CONSTRAINT \`FK_781afdedafe920f331f6229cb62\` FOREIGN KEY (\`userId\`) REFERENCES \`users\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD CONSTRAINT \`FK_41ba27842ac1a2c24817ca59eaa\` FOREIGN KEY (\`orderId\`) REFERENCES \`orders\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD CONSTRAINT \`FK_bf6f2aacd6c2b7711d75207da26\` FOREIGN KEY (\`productIdId\`) REFERENCES \`products\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD CONSTRAINT \`FK_e8cc4be0f828e6ed99cf79fd7b3\` FOREIGN KEY (\`priceId\`) REFERENCES \`products\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD CONSTRAINT \`FK_9b5f18484b366d81435d11aab4a\` FOREIGN KEY (\`addressIdId\`) REFERENCES \`user_addresses\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD CONSTRAINT \`FK_916c66b74d50fe7cad01e3e5895\` FOREIGN KEY (\`userIdId\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE \`products_tags\` ADD CONSTRAINT \`FK_760e7f7633ea6698009264a7b9a\` FOREIGN KEY (\`productId\`) REFERENCES \`products\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`,
@@ -80,7 +32,6 @@ export class InitData1664530121107 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE \`products_tags\` ADD CONSTRAINT \`FK_26646b3daf27bc55654b2e5134d\` FOREIGN KEY (\`tagId\`) REFERENCES \`tags\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`,
     );
-
     const tags = await this.saveTags();
     await this.saveProducts(tags);
     await this.saveUsers();
@@ -94,48 +45,7 @@ export class InitData1664530121107 implements MigrationInterface {
       `ALTER TABLE \`products_tags\` DROP FOREIGN KEY \`FK_760e7f7633ea6698009264a7b9a\``,
     );
     await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP FOREIGN KEY \`FK_916c66b74d50fe7cad01e3e5895\``,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP FOREIGN KEY \`FK_9b5f18484b366d81435d11aab4a\``,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP FOREIGN KEY \`FK_e8cc4be0f828e6ed99cf79fd7b3\``,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP FOREIGN KEY \`FK_bf6f2aacd6c2b7711d75207da26\``,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP FOREIGN KEY \`FK_41ba27842ac1a2c24817ca59eaa\``,
-    );
-    await queryRunner.query(
       `ALTER TABLE \`user_addresses\` DROP FOREIGN KEY \`FK_781afdedafe920f331f6229cb62\``,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`userIdId\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP COLUMN \`addressIdId\``,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`status\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP COLUMN \`additionalInfo\``,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`priceId\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` DROP COLUMN \`productIdId\``,
-    );
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`orderId\``);
-    await queryRunner.query(`ALTER TABLE \`orders\` DROP COLUMN \`quantity\``);
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`priceId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`productIdId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`orderId\` varchar(36) NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE \`orders\` ADD \`quantity\` int NOT NULL DEFAULT '0'`,
     );
     await queryRunner.query(
       `DROP INDEX \`IDX_26646b3daf27bc55654b2e5134\` ON \`products_tags\``,
@@ -144,7 +54,6 @@ export class InitData1664530121107 implements MigrationInterface {
       `DROP INDEX \`IDX_760e7f7633ea6698009264a7b9\` ON \`products_tags\``,
     );
     await queryRunner.query(`DROP TABLE \`products_tags\``);
-    await queryRunner.query(`DROP TABLE \`orders\``);
     await queryRunner.query(`DROP TABLE \`users\``);
     await queryRunner.query(`DROP TABLE \`user_addresses\``);
     await queryRunner.query(`DROP TABLE \`products\``);
