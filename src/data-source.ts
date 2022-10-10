@@ -3,14 +3,14 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 export const options: DataSourceOptions = {
   type: 'mysql',
   host: 'localhost',
-  port: 3333, // set your port here
+  port: 3306, // set your port here
   username: 'root',
   password: 'Qwerty123#',
   database: 'shop',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
   dropSchema: false,
-  migrationsRun: false,
+  migrationsRun: true,
   migrations: [__dirname + '/db/migrations/**/*{.ts,.js}'],
   subscribers: [__dirname + '/db/subscribers/**/*{.ts,.js}'],
 };
