@@ -24,7 +24,7 @@ export class User {
   @Column({ length: 50 })
   email: string;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'datetime' })
   birthdate: Date;
 
   @Column('enum', {
