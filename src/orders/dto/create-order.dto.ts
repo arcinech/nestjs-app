@@ -53,11 +53,4 @@ export class CreateOrderItemDto {
   @Max(100)
   @Type(() => Number)
   quantity: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  @Max(1000000)
-  @Type(() => Number)
-  price: number;
 }
