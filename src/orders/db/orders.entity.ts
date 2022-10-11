@@ -25,7 +25,9 @@ export class Orders {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
+    eager: true,
+  })
   orderItems?: OrderItem[];
 
   @Column('enum', {
@@ -35,13 +37,16 @@ export class Orders {
 
   @ManyToOne(() => User, (user) => user.id, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   user: User;
 
   @Column({ type: 'text', nullable: true })
   additionalInfo: string;
 
-  @ManyToOne(() => UserAddress, (userAddres) => userAddres.id)
+  @ManyToOne(() => UserAddress, (userAddres) => userAddres.id, {
+    eager: true,
+  })
   address: UserAddress;
 
   @Column({ type: 'float' })
