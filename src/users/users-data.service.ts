@@ -6,13 +6,13 @@ import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
 import { dataSource } from 'src/data-source';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class UsersDataService {
   async prepareUserAddressesToSave(
     address: CreateUserAddressDto[] | UpdateUserAddressDto[],
-    UserAddressRepository: Repository<UserAddress>,
+    manager: EntityManager,
   ): Promise<UserAddress[]> {
     const addresses: UserAddress[] = [];
     for (const add of address) {
@@ -24,7 +24,9 @@ export class UsersDataService {
       addressToSave.buildingNumber = add.buildingNumber;
       addressToSave.flatNumber = add?.flatNumber;
 
-      addresses.push(await UserAddressRepository.save(addressToSave));
+      addresses.push(
+        await manager.withRepository(UserAddressRepository).save(addressToSave),
+      );
     }
 
     return addresses;
@@ -42,7 +44,7 @@ export class UsersDataService {
 
       userToSave.address = await this.prepareUserAddressesToSave(
         newUser.address,
-        manager.getRepository(UserAddress),
+        manager,
       );
 
       return await manager.getRepository(User).save(userToSave);
@@ -51,10 +53,9 @@ export class UsersDataService {
 
   async updateUserById(id: string, updatedUser: UpdateUserDto): Promise<User> {
     return dataSource.transaction(async (manager: EntityManager) => {
-      const userManager = manager.getRepository(User);
+      const userManager = manager.withRepository(UserRepository);
       await manager
-        .getRepository(UserAddress)
-        .extend(UserAddressRepository)
+        .withRepository(UserAddressRepository)
         .deleteUserAddressesByUserId(id);
 
       const userToUpdate = await userManager.findOne({
@@ -68,7 +69,7 @@ export class UsersDataService {
       userToUpdate.birthdate = userToUpdate.birthdate;
       userToUpdate.address = await this.prepareUserAddressesToSave(
         userToUpdate.address,
-        manager.getRepository(UserAddress),
+        manager,
       );
 
       return await userManager.save(userToUpdate);
