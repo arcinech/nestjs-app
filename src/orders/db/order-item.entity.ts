@@ -26,20 +26,13 @@ export class OrderItem {
   quantity: number;
 
   @Column({ type: 'float' })
-  total: number;
+  price: number;
 
   @ManyToOne(() => Orders, (order) => order.id, {
     onDelete: 'CASCADE',
   })
   order: Orders;
 
-  @ManyToOne(() => Product, (product) => product.id)
-  productId: Product;
-
-  @ManyToOne(() => Product, (product) => product.name)
-  productName: Product;
-
-  @Column({ type: 'float' })
-  @ManyToOne(() => Product, (product) => product.price)
-  productPrice: Product;
+  @ManyToOne(() => Product, (product) => product.id, { eager: true })
+  product: Product;
 }

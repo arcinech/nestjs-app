@@ -36,11 +36,14 @@ export class Orders {
   @ManyToOne(() => User, (user) => user.id, {
     onDelete: 'CASCADE',
   })
-  userId: User;
+  user: User;
 
   @Column({ type: 'text', nullable: true })
   additionalInfo: string;
 
   @ManyToOne(() => UserAddress, (userAddres) => userAddres.id)
-  addressId: UserAddress;
+  address: UserAddress;
+
+  @Column({ type: 'float' })
+  total: number;
 }
