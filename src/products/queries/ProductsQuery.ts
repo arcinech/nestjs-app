@@ -1,3 +1,5 @@
+import { TextFilterType } from '../../shared/enums/textFilterType.enums';
+
 export interface ProductsQuery {
   minPrice?: number;
   maxPrice?: number;
@@ -7,9 +9,4 @@ export interface ProductsQuery {
   maxCount?: number;
   sortField?: string;
   orderDirection?: 'DESC' | 'ASC';
-}
-
-export enum TextFilterType {
-  EQUALS = 'EQUALS',
-  CONTAINS = 'CONTAINS',
 }
