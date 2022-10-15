@@ -9,7 +9,8 @@ import {
   Equal,
   FindOptionsWhere,
 } from 'typeorm';
-import { ProductsQuery, TextFilterType } from '../queries/ProductsQuery';
+import { ProductsQuery } from '../queries/ProductsQuery';
+import { TextFilterType } from '../../shared/enums/textFilterType.enums';
 
 export const ProductRepository = dataSource.getRepository(Product).extend({
   buildPredicate(query: ProductsQuery): FindManyOptions<Product> {

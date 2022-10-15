@@ -9,7 +9,8 @@ import {
   MoreThan,
 } from 'typeorm';
 import { dataSource } from '../../data-source';
-import { TextFilterType, UsersQuery } from '../queries/UsersQuery';
+import { UsersQuery } from '../queries/UsersQuery';
+import { TextFilterType } from '../../shared/enums/textFilterType.enums';
 import { User } from './user.entity';
 
 export const UserRepository = dataSource.getRepository(User).extend({
