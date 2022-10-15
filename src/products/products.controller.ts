@@ -35,8 +35,8 @@ export class ProductsController {
   async getAllProducts(
     @Query() query: ProductsQuery,
   ): Promise<Array<ExternalProductDto>> {
-    return (await this.productService.getAllProducts(query)).map((i) =>
-      this.mapProductToExternal(i),
+    return (await this.productService.getAllProducts(query)).map((item) =>
+      this.mapProductToExternal(item),
     );
   }
 
