@@ -8,6 +8,7 @@ import {
   Body,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { ExternalProductDto } from './dto/external-product.dto';
@@ -15,10 +16,11 @@ import { ProductsDataService } from './products-data.service';
 import { dateToArray } from '../shared/helpers/date.helper';
 import { RoleGuard } from '../shared/guards/role.guard';
 import { Product } from './db/products.entity';
+import { ProductsQuery } from './queries/ProductsQuery';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private productRepository: ProductsDataService) {}
+  constructor(private productService: ProductsDataService) {}
 
   mapProductToExternal(product: Product): ExternalProductDto {
     return {
@@ -30,15 +32,18 @@ export class ProductsController {
   }
 
   @Get()
-  async getAllProducts(): Promise<Array<ExternalProductDto>> {
-    const products = await this.productRepository.getAllProducts();
-    return products.map((i) => this.mapProductToExternal(i));
+  async getAllProducts(
+    @Query() query: ProductsQuery,
+  ): Promise<Array<ExternalProductDto>> {
+    return (await this.productService.getAllProducts(query)).map((i) =>
+      this.mapProductToExternal(i),
+    );
   }
 
   @Get(':id')
   async getProductById(@Param('id') _id_: string): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      await this.productRepository.getProductById(_id_),
+      await this.productService.getProductById(_id_),
     );
   }
 
@@ -48,14 +53,14 @@ export class ProductsController {
     @Body() _product_: CreateProductDTO,
   ): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      await this.productRepository.addProduct(_product_),
+      await this.productService.addProduct(_product_),
     );
   }
 
   @Delete(':id')
   @HttpCode(204)
   async deleteProduct(@Param('id') _id_: string): Promise<void> {
-    await this.productRepository.deleteProductById(_id_);
+    await this.productService.deleteProductById(_id_);
   }
 
   @Put(':id')
@@ -64,7 +69,7 @@ export class ProductsController {
     @Body() _product_: CreateProductDTO,
   ): Promise<ExternalProductDto> {
     return this.mapProductToExternal(
-      await this.productRepository.updateProduct(_id_, _product_),
+      await this.productService.updateProduct(_id_, _product_),
     );
   }
 }

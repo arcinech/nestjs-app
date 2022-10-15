@@ -6,6 +6,7 @@ import { TagRepository } from './db/tag.repository';
 import { Product } from './db/products.entity';
 import { dataSource } from 'src/data-source';
 import { EntityManager } from 'typeorm';
+import { ProductsQuery } from './queries/ProductsQuery';
 
 @Injectable()
 export class ProductsDataService {
@@ -41,8 +42,8 @@ export class ProductsDataService {
     ProductRepository.delete(id);
   }
 
-  getAllProducts(): Promise<Product[]> {
-    return ProductRepository.find();
+  getAllProducts(_query_: ProductsQuery): Promise<Product[]> {
+    return ProductRepository.findAll(_query_);
   }
 
   getProductById(id: string): Promise<Product> {
