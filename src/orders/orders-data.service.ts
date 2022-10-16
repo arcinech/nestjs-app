@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Product } from 'src/products/db/products.entity';
 import { User } from 'src/users/db/user.entity';
 import { UserAddress } from 'src/users/db/userAddress.entity';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { dataSource } from '../data-source';
 import { OrderItem } from './db/order-item.entity';
 import { Orders } from './db/orders.entity';
@@ -11,6 +11,8 @@ import { Status } from './enums/status.enums';
 import { UpdateOrderDto, UpdateOrderItemDto } from './dto/update-order.dto';
 import { OrdersRepository } from './db/orders.repository';
 import { OrderItemRepository } from './db/order-item.repository';
+import { ProductRepository } from 'src/products/db/products.repository';
+import { UserAddressRepository } from 'src/users/db/userAddress.repository';
 
 @Injectable()
 export class OrdersDataService {
@@ -20,17 +22,24 @@ export class OrdersDataService {
   ): Promise<OrderItem[]> {
     const itemsListToSave: OrderItem[] = [];
 
-    for (const add of orderItems) {
+    const products: Product[] = await manager
+      .withRepository(ProductRepository)
+      .findBy({ id: In(orderItems?.map((item) => item.productId)) });
+
+    if (orderItems.length > 0 && products.length === 0) {
+      throw new Error(orderItems?.map((item) => item.productId).join(' '));
+    }
+
+    for (const add of products) {
       const orderItemToSave = new OrderItem();
-
       orderItemToSave.product = new Product();
-      orderItemToSave.product.id = add.productId;
+      orderItemToSave.product.id = add?.id;
 
-      orderItemToSave.quantity = add.quantity;
-      orderItemToSave.price = await manager
-        .getRepository(Product)
-        .findOne({ id: add.productId })
-        .then((product) => product.price);
+      orderItemToSave.price = add?.price;
+
+      orderItemToSave.quantity = orderItems?.find(
+        (item) => item.productId === add.id,
+      )?.quantity;
 
       itemsListToSave.push(
         await manager.getRepository(OrderItem).save(orderItemToSave),
@@ -39,6 +48,7 @@ export class OrdersDataService {
 
     return itemsListToSave;
   }
+
   async addOrder(newOrder: CreateOrderDto): Promise<Orders> {
     return dataSource.transaction(async (manager: EntityManager) => {
       const orderToSave = new Orders();
@@ -55,11 +65,55 @@ export class OrdersDataService {
       );
 
       orderToSave.total = orderToSave.orderItems?.reduce(
-        (prevValue, currentItem) => prevValue + currentItem.price,
+        (prevValue, currentItem) =>
+          prevValue + currentItem.price * currentItem.quantity,
         0,
       );
 
       return await manager.getRepository(Orders).save(orderToSave);
+    });
+  }
+
+  async addOrderItem(orderId: string, orderItem: CreateOrderItemDto) {
+    return dataSource.transaction(async (manager) => {
+      const product = await manager
+        .withRepository(ProductRepository)
+        .findOneBy({ id: orderItem.productId });
+
+      if (!product) {
+        throw new Error('Product does not exists');
+      }
+
+      return manager
+        .withRepository(OrderItemRepository)
+        .addProductToOrder(orderId, orderItem, product);
+    });
+  }
+
+  async removeOrderItem(orderId: string, orderItemId: string): Promise<Orders> {
+    return dataSource.transaction(async (manager) => {
+      const order = await manager
+        .withRepository(OrdersRepository)
+        .findOneBy({ id: orderId });
+      const orderItem = await manager
+        .getRepository(OrderItem)
+        .findOne({ where: { id: orderItemId } });
+
+      if (
+        !orderItem ||
+        !order ||
+        order.orderItems?.find((item) => item.id === orderItem.id)
+      ) {
+        throw new Error(
+          'This order item or order does not exists or item does not exists on order',
+        );
+      }
+
+      await manager.withRepository(OrderItemRepository).delete(orderItemId);
+
+      return await manager
+        .withRepository(OrdersRepository)
+        .findOneBy({ id: orderId });
     });
   }
 
@@ -71,7 +125,8 @@ export class OrdersDataService {
       const orderManager = manager.withRepository(OrdersRepository);
       await manager
         .withRepository(OrderItemRepository)
-        .deleteProductOrderByOrderId(id);
+        .deleteOrderItemsByOrderId(id);
+
       const orderToUpdate = await orderManager.findOne({ where: { id: id } });
 
       orderToUpdate.status = updatedOrder.status;
@@ -86,11 +141,11 @@ export class OrdersDataService {
       );
 
       orderToUpdate.total = orderToUpdate.orderItems?.reduce(
-        (prev, curr) => prev + curr.price,
+        (prev, curr) => prev + curr.price * curr.quantity,
         0,
       );
 
-      return manager.withRepository(OrdersRepository).save(orderToUpdate);
+      return orderManager.save(orderToUpdate);
     });
   }
 
@@ -104,5 +159,24 @@ export class OrdersDataService {
 
   async deleteOrderById(id: string): Promise<void> {
     OrdersRepository.delete(id);
+  }
+
+  async updateUserAddress(
+    orderId: string,
+    newAddressId: string,
+  ): Promise<Orders> {
+    return dataSource.transaction(async (manager) => {
+      const address = await manager
+        .withRepository(UserAddressRepository)
+        .findOneBy({ id: newAddressId });
+
+      if (!address) {
+        throw new Error(`Address does not exists`);
+      }
+
+      return manager
+        .withRepository(OrdersRepository)
+        .updateUserAddress(orderId, newAddressId);
+    });
   }
 }
