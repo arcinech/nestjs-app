@@ -7,6 +7,7 @@ import { UserAddressRepository } from './db/userAddress.repository';
 import { UserAddress } from './db/userAddress.entity';
 import { dataSource } from 'src/data-source';
 import { EntityManager } from 'typeorm';
+import { UsersQuery } from './queries/UsersQuery';
 
 @Injectable()
 export class UsersDataService {
@@ -86,7 +87,7 @@ export class UsersDataService {
     });
   }
 
-  getAllUsers(): Promise<User[]> {
-    return UserRepository.find();
+  getAllUsers(_query_: UsersQuery): Promise<User[]> {
+    return UserRepository.findAll(_query_);
   }
 }

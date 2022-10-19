@@ -15,15 +15,8 @@ import { Type } from 'class-transformer';
 
 export class UpdateOrderDto {
   @IsNotEmpty()
-  @IsEnum(Status, { each: true })
+  @IsEnum(Status)
   status: Status;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  @Max(1000000)
-  @Type(() => Number)
-  total: number;
 
   @IsOptional()
   @MaxLength(255)
@@ -53,11 +46,4 @@ export class UpdateOrderItemDto {
   @Max(100)
   @Type(() => Number)
   quantity: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  @Max(1000000)
-  @Type(() => Number)
-  price: number;
 }

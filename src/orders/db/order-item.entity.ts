@@ -22,10 +22,10 @@ export class OrderItem {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', default: 1 })
   quantity: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', default: 0 })
   price: number;
 
   @ManyToOne(() => Orders, (order) => order.id, {

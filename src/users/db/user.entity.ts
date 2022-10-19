@@ -32,6 +32,8 @@ export class User {
   })
   role: Roles;
 
-  @OneToMany(() => UserAddress, (address) => address.user)
+  @OneToMany(() => UserAddress, (address) => address.user, {
+    eager: true,
+  })
   address?: UserAddress[];
 }
